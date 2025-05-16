@@ -16,18 +16,22 @@ public class Main {
             System.out.println("Accepted the connection");
 
             PrintStream printStreamOut = new PrintStream(clientSocket.getOutputStream(), true);
+            HttpRequest httpRequest = HttpRequest.parseRequest(clientSocket.getInputStream());
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
-            String plainRequestPath = bufferedReader.readLine();
-            String[] splitRequestPath = plainRequestPath.split(" ");
+            HttpServerService serverService = new HttpServerService();
+            serverService.handleRequest(httpRequest, printStreamOut);
 
-            if(splitRequestPath[1].equals("/")){
-                printStreamOut.println(HttpStatus.OK.getResponse());
-                System.out.println("sent response to the client : "+HttpStatus.OK.getResponse());
-            }else {
-                printStreamOut.println(HttpStatus.NOT_FOUND.getResponse());
-                System.out.println("sent response to the client : "+HttpStatus.NOT_FOUND.getResponse());
-            }
+//            String plainRequestPath = bufferedReader.readLine();
+//            String[] splitRequestPath = plainRequestPath.split("\r\n");
+//
+//            if(splitRequestPath[1].equals("/")){
+//                printStreamOut.println(HttpStatus.OK.getResponse());
+//                System.out.println("sent response to the client : "+HttpStatus.OK.getResponse());
+//            }else {
+//                printStreamOut.println(HttpStatus.NOT_FOUND.getResponse());
+//                System.out.println("sent response to the client : "+HttpStatus.NOT_FOUND.getResponse());
+//            }
             serverSocket.close();
             clientSocket.close();
         }catch(Exception e){
@@ -36,18 +40,6 @@ public class Main {
     }
 }
 
-enum HttpStatus{
-    OK("HTTP/1.1 200 OK\r\n\r\n"),
-    NOT_FOUND("HTTP/1.1 404 Not Found\r\n\r\n");
-
-    private final String response;
-
-    HttpStatus(String response){
-        this.response = response;
-    }
 
 
-    public String getResponse(){
-        return response;
-    }
-}
+
