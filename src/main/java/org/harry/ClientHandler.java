@@ -8,9 +8,11 @@ import java.net.Socket;
 public class ClientHandler implements Runnable{
 
     Socket clientSocket;
+    String fileDirectory;
 
-    ClientHandler(Socket clientSocket) throws IOException {
+    ClientHandler(Socket clientSocket, String fileDirectory) throws IOException {
         this.clientSocket = clientSocket;
+        this.fileDirectory = fileDirectory;
     }
 
     @Override
@@ -22,7 +24,7 @@ public class ClientHandler implements Runnable{
 
 
             HttpServerService serverService = new HttpServerService();
-            serverService.handleRequest(httpRequest, printStreamOut);
+            serverService.handleRequest(httpRequest, printStreamOut, fileDirectory);
         }catch (Exception e){
             e.printStackTrace();
         }
