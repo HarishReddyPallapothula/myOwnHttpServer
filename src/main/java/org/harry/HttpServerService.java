@@ -16,7 +16,11 @@ public class HttpServerService {
         if(endPoint.equals("/user-agent")){
             return new HttpResponse(200, "OK", request.requestHeaders.get("User-Agent"));
         } else if (endPoint.startsWith("/echo/")) {
-            String body = request.requestTarget.split("/")[2];
+            String[] splitBody = request.requestTarget.split("/");
+            if(splitBody.length < 3){
+                return new HttpResponse(400, "NOT_FOUND");
+            }
+            String body = splitBody[2];
             return new HttpResponse(200, "OK", body);
         } else if (endPoint.equals("/")) {
             return new HttpResponse(200, "OK");
