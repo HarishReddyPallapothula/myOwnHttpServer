@@ -15,12 +15,14 @@ public class HttpRequest {
     Method method;
     Map<String, String> requestHeaders;
     String requestTarget;
+    String requestBody;
 
-    public HttpRequest(Method method, String version, String requestTarget, Map<String, String> requestHeaders) {
+    public HttpRequest(Method method, String version, String requestTarget, Map<String, String> requestHeaders, String requestBody) {
         this.method = method;
         this.version = version;
         this.requestTarget = requestTarget;
         this.requestHeaders = requestHeaders;
+        this.requestBody = requestBody;
     }
 
 
@@ -46,6 +48,14 @@ public class HttpRequest {
             }
         }
 
-        return new HttpRequest(method, target, version, requestHeaders);
+        StringBuilder requestBody = new StringBuilder();
+        int ch;
+        int contentLength = Integer.parseInt(requestHeaders.getOrDefault("Content-Length", "0"));
+        for (var i = 0; i < contentLength; i++) {
+            ch = bufferedReader.read();
+            requestBody.append((char)ch);
+        }
+
+        return new HttpRequest(method, target, version, requestHeaders, requestBody.toString());
     }
 }
