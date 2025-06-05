@@ -4,34 +4,47 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ResponseHeader {
-    public ResponseHeader(String contentType, String contentLength) {
-        this.contentType = contentType;
-        this.contentLength = contentLength;
-        this.headerMap.put("Content-Type",contentType);
-        this.headerMap.put("Content-Length", contentLength);
-    }
+    private final Map<String, String> headerMap;
 
-
-    String contentType;
-    String contentLength;
-    Map<String, String> headerMap = new HashMap<>();
-    public String getContentType() {
-        return contentType;
-    }
-
-    public void setContentType(String contentType) {
-        this.contentType = contentType;
-    }
-
-    public String getContentLength() {
-        return contentLength;
-    }
-
-    public void setContentLength(String contentLength) {
-        this.contentLength = contentLength;
+    private ResponseHeader(Builder builder) {
+        this.headerMap = builder.headerMap;
     }
 
     public Map<String, String> getHeaderMap() {
         return headerMap;
+    }
+
+    public String getContentType() {
+        return headerMap.get("Content-Type");
+    }
+
+    public String getContentLength() {
+        return headerMap.get("Content-Length");
+    }
+
+    public static class Builder {
+        private final Map<String, String> headerMap = new HashMap<>();
+
+        public Builder contentType(String contentType) {
+            headerMap.put("Content-Type", contentType);
+            return this;
+        }
+
+        public Builder contentLength(String contentLength) {
+            headerMap.put("Content-Length", contentLength);
+            return this;
+        }
+
+        public Builder addHeader(String key, String value) {
+            headerMap.put(key, value);
+            return this;
+        }
+
+        public ResponseHeader build() {
+                // Fallbacks for required headers
+                headerMap.putIfAbsent("Content-Type", "text/plain");
+                headerMap.putIfAbsent("Content-Length", "0");
+                return new ResponseHeader(this);
+        }
     }
 }

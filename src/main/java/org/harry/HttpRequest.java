@@ -55,7 +55,6 @@ public class HttpRequest {
             ch = bufferedReader.read();
             requestBody.append((char)ch);
         }
-
         return new HttpRequest(method, target, version, requestHeaders, requestBody.toString());
     }
 }
