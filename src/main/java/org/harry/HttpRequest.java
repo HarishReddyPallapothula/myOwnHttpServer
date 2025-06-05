@@ -17,6 +17,26 @@ public class HttpRequest {
     String requestTarget;
     String requestBody;
 
+    public String getVersion() {
+        return version;
+    }
+
+    public Method getMethod() {
+        return method;
+    }
+
+    public Map<String, String> getRequestHeaders() {
+        return requestHeaders;
+    }
+
+    public String getRequestTarget() {
+        return requestTarget;
+    }
+
+    public String getRequestBody() {
+        return requestBody;
+    }
+
     public HttpRequest(Method method, String version, String requestTarget, Map<String, String> requestHeaders, String requestBody) {
         this.method = method;
         this.version = version;

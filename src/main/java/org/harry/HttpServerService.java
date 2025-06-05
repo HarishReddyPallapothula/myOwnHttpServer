@@ -1,7 +1,8 @@
 package org.harry;
 
+import org.harry.requestHandlers.EndpointHandler;
+
 import java.io.*;
-import java.nio.file.Files;
 
 public class HttpServerService {
 
@@ -13,6 +14,8 @@ public class HttpServerService {
         EndpointHandler handler = router.route(request);
         response.println(handler.handle(request, fileDirectory).getHttpResponse());
     }
+
+    //helps to understand how easily we can understand code if it is modular and not like below.
 
     /*private HttpResponse handleEndpoint(HttpRequest request, String fileDirectory) throws IOException {
         String endPoint = request.requestTarget;

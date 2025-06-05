@@ -1,4 +1,7 @@
-package org.harry;
+package org.harry.requestHandlers;
+
+import org.harry.HttpRequest;
+import org.harry.HttpResponse;
 
 import java.io.IOException;
 

@@ -1,4 +1,7 @@
-package org.harry;
+package org.harry.requestHandlers;
+
+import org.harry.HttpRequest;
+import org.harry.HttpResponse;
 
 public class UserAgentHandler implements EndpointHandler {
     @Override
@@ -6,7 +9,7 @@ public class UserAgentHandler implements EndpointHandler {
         return new HttpResponse.Builder()
                 .code(200)
                 .reason("OK")
-                .responseBody(request.requestHeaders.get("User-Agent"))
+                .responseBody(request.getRequestHeaders().get("User-Agent"))
                 .build();
     }
 }

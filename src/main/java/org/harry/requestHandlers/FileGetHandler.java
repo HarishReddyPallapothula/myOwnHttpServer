@@ -1,4 +1,8 @@
-package org.harry;
+package org.harry.requestHandlers;
+
+import org.harry.HttpRequest;
+import org.harry.HttpResponse;
+import org.harry.ResponseHeader;
 
 import java.io.File;
 import java.io.IOException;
@@ -7,7 +11,7 @@ import java.nio.file.Files;
 public class FileGetHandler implements EndpointHandler {
     @Override
     public HttpResponse handle(HttpRequest request, String fileDirectory) throws IOException {
-        String fileName = request.requestTarget.substring(7); // remove /files/
+        String fileName = request.getRequestTarget().substring(7); // remove /files/
         File file = new File(fileDirectory, fileName);
 
         if (file.exists() && file.isFile()) {

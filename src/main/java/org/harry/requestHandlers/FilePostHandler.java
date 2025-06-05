@@ -1,4 +1,8 @@
-package org.harry;
+package org.harry.requestHandlers;
+
+import org.harry.HttpRequest;
+import org.harry.HttpResponse;
+import org.harry.ResponseHeader;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -8,23 +12,23 @@ import java.io.IOException;
 public class FilePostHandler implements EndpointHandler {
     @Override
     public HttpResponse handle(HttpRequest request, String fileDirectory) {
-        String fileName = request.requestTarget.substring(7);
+        String fileName = request.getRequestTarget().substring(7);
         File file = new File(fileDirectory, fileName);
         file.getParentFile().mkdirs();
 
         try (BufferedWriter buf = new BufferedWriter(new FileWriter(file))) {
-            buf.write(request.requestBody);
+            buf.write(request.getRequestBody());
 
             ResponseHeader header = new ResponseHeader.Builder()
                     .contentType("application/octet-stream")
-                    .contentLength(String.valueOf(request.requestBody.length()))
+                    .contentLength(String.valueOf(request.getRequestBody().length()))
                     .build();
 
             return new HttpResponse.Builder()
                     .code(201)
                     .reason("Created")
                     .responseHeader(header)
-                    .responseBody(request.requestBody)
+                    .responseBody(request.getRequestBody())
                     .build();
 
         } catch (IOException e) {
