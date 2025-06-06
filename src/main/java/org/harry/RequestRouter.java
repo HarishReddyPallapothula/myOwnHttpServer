@@ -18,15 +18,14 @@ public class RequestRouter {
 
     public EndpointHandler route(HttpRequest request) {
         if (request.method == HttpRequest.Method.GET) {
-            if (request.requestTarget.equals("/user-agent")) return getHandlers.get("/user-agent");
-            if (request.requestTarget.startsWith("/echo/")) return getHandlers.get("/echo");
-            if (request.requestTarget.startsWith("/files/")) return getHandlers.get("/files");
-            if (request.requestTarget.equals("/")) {
+            if(request.requestHeaders.containsKey("Accept-Encoding")) return getHandlers.get("Accept-Encoding");
+            else if (request.requestTarget.equals("/user-agent")) return getHandlers.get("/user-agent");
+            else if (request.requestTarget.startsWith("/echo/")) return getHandlers.get("/echo");
+            else if (request.requestTarget.startsWith("/files/")) return getHandlers.get("/files");
+            else if (request.requestTarget.equals("/")) {
                 return (req, dir) -> new HttpResponse.Builder().code(200).reason("OK").build();
             }
-        }
-
-        if (request.method == HttpRequest.Method.POST && request.requestTarget.startsWith("/files/")) {
+        } else if (request.method == HttpRequest.Method.POST && request.requestTarget.startsWith("/files/")) {
             return new FilePostHandler();
         }
 
