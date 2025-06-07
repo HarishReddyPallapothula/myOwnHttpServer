@@ -5,12 +5,14 @@ import org.harry.HttpResponse;
 import org.harry.ResponseHeader;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 public class EncodingHandler implements EndpointHandler {
     @Override
     public HttpResponse handle(HttpRequest request, String fileDirectory) throws IOException {
-        {
-            if(request.getRequestHeaders().get("Accept-Encoding").equals("gzip")){
+        List<String> encodingTypes = Arrays.asList(request.getRequestHeaders().get("Accept-Encoding").trim().split("\\s*,\\s*"));
+        if(encodingTypes.contains("gzip")){
                 ResponseHeader responseHeader = new ResponseHeader.Builder()
                         .addHeader("Content-Encoding", "gzip").build();
 
@@ -23,6 +25,5 @@ public class EncodingHandler implements EndpointHandler {
                         .code(200)
                         .reason("OK").build();
             }
-        }
     }
 }
