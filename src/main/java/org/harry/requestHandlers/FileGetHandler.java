@@ -10,7 +10,7 @@ import java.nio.file.Files;
 
 public class FileGetHandler implements EndpointHandler {
     @Override
-    public HttpResponse handle(HttpRequest request, String fileDirectory) throws IOException {
+    public HttpResponse handle(HttpRequest request, String fileDirectory, boolean connectionClose) throws IOException {
         String fileName = request.getRequestTarget().substring(7); // remove /files/
         File file = new File(fileDirectory, fileName);
 
@@ -26,12 +26,12 @@ public class FileGetHandler implements EndpointHandler {
                     .reason("OK")
                     .responseHeader(header)
                     .responseBody(new String(content))
-                    .build();
+                    .build(connectionClose);
         }
 
         return new HttpResponse.Builder()
                 .code(404)
                 .reason("Not Found")
-                .build();
+                .build(connectionClose);
     }
 }

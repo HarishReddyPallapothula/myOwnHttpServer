@@ -7,5 +7,5 @@ import java.io.IOException;
 
 
 public interface EndpointHandler {
-    HttpResponse handle(HttpRequest request, String fileDirectory) throws IOException;
+    HttpResponse handle(HttpRequest request, String fileDirectory, boolean connectionClose) throws IOException;
 }

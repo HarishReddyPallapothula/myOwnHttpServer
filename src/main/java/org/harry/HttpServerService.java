@@ -3,16 +3,18 @@ package org.harry;
 import org.harry.requestHandlers.EndpointHandler;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 
 public class HttpServerService {
 
-    protected void handleRequest(HttpRequest request, PrintStream response, String fileDirectory) throws IOException {
-        /*HttpResponse serverResponse = this.handleEndpoint(request, fileDirectory);
-        response.println(serverResponse.getHttpResponse());*/
-
+    protected void handleRequest(HttpRequest request, OutputStream response, String fileDirectory) throws IOException {
         RequestRouter router = new RequestRouter();
         EndpointHandler handler = router.route(request);
-        response.println(handler.handle(request, fileDirectory).getHttpResponse());
+        boolean connectionClose = request.requestHeaders.containsKey("Connection");
+        HttpResponse httpResponse = handler.handle(request, fileDirectory, connectionClose);
+        response.write(httpResponse.getHeaderSection().getBytes(StandardCharsets.UTF_8));
+        response.write(httpResponse.getResponseBody());
+        response.flush();
     }
 
     //helps to understand how easily we can understand code if it is modular and not like below.

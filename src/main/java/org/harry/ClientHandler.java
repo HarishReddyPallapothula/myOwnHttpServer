@@ -1,6 +1,8 @@
 package org.harry;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -18,13 +20,19 @@ public class ClientHandler implements Runnable{
     @Override
     public void run() {
         try {
-
-            PrintStream printStreamOut = new PrintStream(clientSocket.getOutputStream(), true);
-            HttpRequest httpRequest = HttpRequest.parseRequest(clientSocket.getInputStream());
-
-
-            HttpServerService serverService = new HttpServerService();
-            serverService.handleRequest(httpRequest, printStreamOut, fileDirectory);
+            InputStream in = clientSocket.getInputStream();
+            OutputStream out = clientSocket.getOutputStream();
+            while (true) {
+                HttpRequest httpRequest = HttpRequest.parseRequest(in);
+                HttpServerService serverService = new HttpServerService();
+                serverService.handleRequest(httpRequest, out, fileDirectory);
+                String connectionHeader = httpRequest.requestHeaders.get("Connection");
+                if (connectionHeader != null && connectionHeader.equalsIgnoreCase("close")) {
+                    System.out.println("Client requested to close the connection.");
+                    clientSocket.close();// close client socket
+                    break;
+                }
+            }
         }catch (Exception e){
             e.printStackTrace();
         }

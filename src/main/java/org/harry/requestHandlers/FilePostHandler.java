@@ -11,7 +11,7 @@ import java.io.IOException;
 
 public class FilePostHandler implements EndpointHandler {
     @Override
-    public HttpResponse handle(HttpRequest request, String fileDirectory) {
+    public HttpResponse handle(HttpRequest request, String fileDirectory, boolean connectionClose) {
         String fileName = request.getRequestTarget().substring(7);
         File file = new File(fileDirectory, fileName);
         file.getParentFile().mkdirs();
@@ -29,13 +29,13 @@ public class FilePostHandler implements EndpointHandler {
                     .reason("Created")
                     .responseHeader(header)
                     .responseBody(request.getRequestBody())
-                    .build();
+                    .build(connectionClose);
 
         } catch (IOException e) {
             return new HttpResponse.Builder()
                     .code(500)
                     .reason("Internal Server Error")
-                    .build();
+                    .build(connectionClose);
         }
     }
 }

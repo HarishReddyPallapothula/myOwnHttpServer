@@ -8,20 +8,20 @@ public class HttpResponse {
     private static final String CRLF = "\r\n";
 
     private final ResponseHeader responseHeader;
-    private final String responseBody;
+    private final byte[] responseBody;
     private final int code;
     private final String reason;
-    private final String httpResponse;
+    //private final String httpResponse;
 
     private HttpResponse(Builder builder) {
         this.responseHeader = builder.responseHeader;
         this.responseBody = builder.responseBody;
         this.code = builder.code;
         this.reason = builder.reason;
-        this.httpResponse = buildResponse(DEFAULT_VERSION, String.valueOf(code), reason, responseHeader, responseBody);
+        //this.httpResponse = buildResponse(DEFAULT_VERSION, String.valueOf(code), reason, responseHeader, responseBody);
     }
 
-    private String buildResponse(String version, String code, String reason,
+    /*private String buildResponse(String version, String code, String reason,
                                  ResponseHeader responseHeader, String responseBody) {
         StringBuilder sb = new StringBuilder();
         sb.append(version).append(' ').append(code).append(' ').append(reason).append(CRLF);
@@ -31,15 +31,29 @@ public class HttpResponse {
         sb.append(CRLF);
         sb.append(responseBody);
         return sb.toString();
+    }*/
+
+    /*public String getHttpResponse() {
+        return httpResponse;
+    }*/
+
+    public String getHeaderSection() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(DEFAULT_VERSION).append(' ').append(code).append(' ').append(reason).append(CRLF);
+        for (Map.Entry<String, String> entry : responseHeader.getHeaderMap().entrySet()) {
+            sb.append(entry.getKey()).append(": ").append(entry.getValue()).append(CRLF);
+        }
+        sb.append(CRLF);
+        return sb.toString();
     }
 
-    public String getHttpResponse() {
-        return httpResponse;
+    public byte[] getResponseBody() {
+        return responseBody;
     }
 
     public static class Builder {
         private ResponseHeader responseHeader;
-        private String responseBody = "";
+        private byte[] responseBody = new byte[0];
         private int code = 200;
         private String reason = "OK";
 
@@ -54,6 +68,11 @@ public class HttpResponse {
         }
 
         public Builder responseBody(String body) {
+            this.responseBody = body.getBytes();
+            return this;
+        }
+
+        public Builder compressedResponseBody(byte[] body) {
             this.responseBody = body;
             return this;
         }
@@ -63,15 +82,18 @@ public class HttpResponse {
             return this;
         }
 
-        public HttpResponse build() {
+        public HttpResponse build(boolean connectionClose) {
             // If responseHeader is not provided, create a default one
             if (this.responseHeader == null) {
-                String contentLength = String.valueOf(responseBody.length());
+                String contentLength = String.valueOf(responseBody.length);
                 this.responseHeader = new ResponseHeader.Builder()
                         .contentLength(contentLength)
                         .contentType(DEFAULT_CONTENT_TYPE)
                         .build();
                 //this.responseHeader = new ResponseHeader(DEFAULT_CONTENT_TYPE, contentLength);
+            }
+            if(connectionClose){
+                this.responseHeader.getHeaderMap().putIfAbsent("Connection", "close");
             }
             return new HttpResponse(this);
         }

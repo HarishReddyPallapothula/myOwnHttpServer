@@ -14,6 +14,7 @@ public class RequestRouter {
         getHandlers.put("/user-agent", new UserAgentHandler());
         getHandlers.put("/echo", new EchoHandler());
         getHandlers.put("/files", new FileGetHandler());
+        getHandlers.put(("Accept-Encoding"), new EncodingHandler());
     }
 
     public EndpointHandler route(HttpRequest request) {
@@ -23,7 +24,7 @@ public class RequestRouter {
             else if (request.requestTarget.startsWith("/echo/")) return getHandlers.get("/echo");
             else if (request.requestTarget.startsWith("/files/")) return getHandlers.get("/files");
             else if (request.requestTarget.equals("/")) {
-                return (req, dir) -> new HttpResponse.Builder().code(200).reason("OK").build();
+                return (req, dir, connection) -> new HttpResponse.Builder().code(200).reason("OK").build(connection);
             }
         } else if (request.method == HttpRequest.Method.POST && request.requestTarget.startsWith("/files/")) {
             return new FilePostHandler();
